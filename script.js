@@ -1,17 +1,11 @@
 var now = moment().format("LLL");
 var APIKey = "9ceffc16572e37c6256c7430926365a7";
 
-$('#historyBtn').click(function () {
-  event.preventDefault()
-  alert('here')
-  console.log(this)
-})
-$('#searchBtn').click(function () {
-  event.preventDefault()
-  var findCity = $('#citySearch').val().trim();
+window.onload = function () {
+  this.getCurrent('denver')
+  this.populateHistoryList()
+}
 
-  getCurrent(findCity)
-})
 function getCurrent(findCity) {
   // Here we are building the URL we need to query the database
   var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + findCity + ",us&units=imperial&appid=" + APIKey;
@@ -71,14 +65,21 @@ function historyList(city) {
 }
 function populateHistoryList() {
   $('#historyList').empty()
-  newList = $(' <div class="list-group" id="historyBtn">')
+  newList = $(' <div class="list-group" id="historyList">')
   for (var i = 0; i < localStorage.length; i++) {
-    newList.append(`<button type="button" class="list-group-item list-group-item-action ">${localStorage.key(i)}</button>`)
+    newList.append(`<button type="button" class="list-group-item list-group-item-action historyBtn" data-attr="${localStorage.key(i)}">${localStorage.key(i)}</button>`)
 
   }
   $('#historyList').append(newList)
 }
-window.onload = function () {
-  this.getCurrent('denver')
-  this.populateHistoryList()
-}
+$("#historyList ").on("click", ".historyBtn", function () {
+  event.preventDefault()
+  getCurrent($(this).attr("data-attr"))
+  
+})
+$('#searchBtn').click(function () {
+  event.preventDefault()
+  var findCity = $('#citySearch').val().trim();
+
+  getCurrent(findCity)
+})
