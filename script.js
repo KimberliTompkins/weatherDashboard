@@ -20,10 +20,30 @@ function getCurrent(findCity) {
     temp = (`<p>Temperature: ${response.main.temp}</p>`)
     humidity = (`<p>Humidity: ${response.main.humidity}</p>`)
     wind = (`<p>Wind: ${response.wind.speed}</p>`)
-    $("#currentForecast").append(city, temp, humidity, wind)
+    
 
-    historyList(findCity)
-    futureForecast(findCity)
+    
+    $.ajax({
+      type: "GET",
+      url: `https://api.openweathermap.org/data/2.5/uvi?appid=${APIKey}&lat=${response.coord.lat}&lon=${response.coord.lon}`,
+      dataType: "json"
+  }).then(function(response){
+      var btn= $("<span>").addClass("btn btn-sm").text(response.value)
+      if (response.value > 7.99){
+          btn.addClass("btn-danger")
+      } else if(response.value <7.98 && response.value >6){
+          btn.addClass("btn-warning")
+      } else {
+          btn.addClass("btn-success")
+      }
+      uvi = ("UV Index: ")
+      console.log(uvi)
+      console.log(btn)
+      $("#currentForecast").append(city, temp, humidity, wind,uvi,btn)
+      historyList(findCity)
+      futureForecast(findCity)
+})
+
 
   });
 
